@@ -1,31 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp(name="drivetrain",group = "testing")
-public class drivetrain extends OpMode {
-    DcMotorEx frontLeft, frontRight, backLeft, backRight;
-
-    @Override
-    public void init() {
-        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
-        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
-
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
+public class drivetrain {
+    hwManager hwManager;
+    public drivetrain(hwManager hwManager) {
+        this.hwManager = hwManager;
     }
-
-    @Override
-    public void loop() {
-        double x = gamepad1.left_stick_x;
-        double y = gamepad1.left_stick_y;
-        double rx = gamepad1.right_stick_x;
-        double botHeading = 0;
+    public void resetYaw() {
+        hwManager.imu.resetYaw();
+    }
+    public void drive(double x, double y, double rx) {
+        double botHeading = hwManager.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
@@ -37,9 +23,10 @@ public class drivetrain extends OpMode {
         double frontRightPower = (rotY - rotX - rx) / denominator;
         double backRightPower = (rotY + rotX - rx) / denominator;
 
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
+        hwManager.frontLeft.setPower(frontLeftPower);
+        hwManager.frontRight.setPower(frontRightPower);
+        hwManager.backLeft.setPower(backLeftPower);
+        hwManager.backRight.setPower(backRightPower);
     }
+
 }
