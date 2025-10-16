@@ -1,22 +1,27 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
 public class drivetrain {
     hwManager hwManager;
+
+    // Tunable parameters
+    private static final double STRAFE_CORRECTION = 1.1;
+
     public drivetrain(hwManager hwManager) {
         this.hwManager = hwManager;
     }
+
     public void resetYaw() {
-        hwManager.imu.resetYaw();
+        hwManager.pinpoint.resetPosAndIMU();
     }
+
     public void drive(double x, double y, double rx) {
-        double botHeading = hwManager.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        x = x * STRAFE_CORRECTION;
+
+        double botHeading = hwManager.pinpoint.getHeading();
 
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        rotX = rotX * 1.1;
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
         double frontLeftPower = (rotY + rotX + rx) / denominator;
         double backLeftPower = (rotY - rotX + rx) / denominator;
@@ -28,5 +33,4 @@ public class drivetrain {
         hwManager.backLeft.setPower(backLeftPower);
         hwManager.backRight.setPower(backRightPower);
     }
-
 }
