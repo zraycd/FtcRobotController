@@ -18,7 +18,7 @@ public class shooter {
     }
     public void shootClose() {
         if (currentMode == 2) {turnOff(); return;}
-        hwManager.shooter.setVelocity(1850);
+        hwManager.shooter.setVelocity(1820);
         hwManager.angle.setPosition(0.55);
         currentMode = 2;
     }
